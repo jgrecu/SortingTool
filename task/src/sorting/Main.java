@@ -5,23 +5,39 @@ import java.util.*;
 public class Main {
     public static void main(final String[] args) {
         parseArgs(args);
+
     }
 
     private static void parseArgs(String[] args) {
         List<String> arguments = Arrays.asList(args);
         boolean byCount = false;
 
+        arguments.stream().filter(s -> s.startsWith("-"))
+                .filter(s -> !s.equals("-sortingType"))
+                .filter(s -> !s.equals("-dataType"))
+                .forEach(s -> System.out.println("\"" + s + "\"" + " is not a valid parameter. It will be skipped."));
         if (arguments.contains("-sortingType")) {
-            if (arguments.contains("byCount")) {
+            int sortingTypeIndex = arguments.indexOf("-sortingType") + 1;
+            if (sortingTypeIndex >= arguments.size() ||
+                    !"natural".equals(arguments.get(sortingTypeIndex)) &&
+                            !"byCount".equals(arguments.get(sortingTypeIndex))) {
+                System.out.println("No sorting type defined!");
+                return;
+            } else if ("byCount".equals(arguments.get(sortingTypeIndex))) {
                 byCount = true;
             }
         }
         if (arguments.contains("-dataType")) {
-            if (arguments.contains("long")) {
+            int dataTypeIndex = arguments.indexOf("-dataType") + 1;
+            if (dataTypeIndex >= arguments.size() || !"long".equals(arguments.get(dataTypeIndex)) &&
+                    !"line".equals(arguments.get(dataTypeIndex)) && !"word".equals(arguments.get(dataTypeIndex))) {
+                System.out.println("No data type defined!");
+                return;
+            } else if ("long".equals(arguments.get(dataTypeIndex))) {
                 parseLong(byCount);
-            } else if (arguments.contains("line")) {
+            } else if ("line".equals(arguments.get(dataTypeIndex))) {
                 parseLine(byCount);
-            } else {
+            } else if ("word".equals(arguments.get(dataTypeIndex))) {
                 parseWords(byCount);
             }
         } else {
@@ -32,9 +48,14 @@ public class Main {
     private static void parseLong(boolean byCount) {
         Scanner scanner = new Scanner(System.in);
         List<Long> list = new ArrayList<>();
-        while (scanner.hasNextLong()) {
-            long number = scanner.nextLong();
-            list.add(number);
+        while (scanner.hasNext()) {
+            String number = scanner.next();
+            boolean isNumeric = number.matches("[+-]?\\d*(\\.\\d+)?");
+            if (!isNumeric) {
+                System.out.println("\"" + number + "\"" + " is not a long. It will be skipped.");
+                continue;
+            }
+            list.add(Long.parseLong(number));
         }
         System.out.printf("Total numbers: %d.%n", list.size());
         if (byCount) {
