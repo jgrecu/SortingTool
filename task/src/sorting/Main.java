@@ -66,8 +66,9 @@ public class Main {
         if (byCount) {
             int size = list.size();
             List<String> listNoDuplicates = new ArrayList<>(new TreeSet<>(list));
-            Collections.sort(listNoDuplicates, Comparator.comparing(String::length).reversed());
+
             Collections.sort(listNoDuplicates, Comparator.comparing(i -> Collections.frequency(list, i)));
+
             listNoDuplicates.forEach(i -> System.out.println(i + ": " +
                     Collections.frequency(list, i) + " time(s), " +
                     (Collections.frequency(list, i) * 100) / size + "%"));
