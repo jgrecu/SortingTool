@@ -4,22 +4,34 @@ import java.util.*;
 
 public class Main {
     public static void main(final String[] args) {
-        List<String> arguments = Arrays.asList(args);
-        boolean sorted = false;
+        parseArgs(args);
+    }
 
-        if (arguments.contains("-sortIntegers")) {
-            sorted = true;
+    private static void parseArgs(String[] args) {
+        List<String> arguments = Arrays.asList(args);
+        boolean sorted = true;
+        boolean byCount = false;
+
+        if (arguments.contains("-sortingType")) {
+            //sorted = true;
+            if (arguments.contains("byCount")) {
+                byCount = true;
+            }
         }
-        if (arguments.contains("long")) {
-            parseLong(sorted);
-        } else if (arguments.contains("line")) {
-            parseLine(sorted);
+        if (arguments.contains("-dataType")) {
+            if (arguments.contains("long")) {
+                parseLong(sorted, byCount);
+            } else if (arguments.contains("line")) {
+                parseLine(sorted, byCount);
+            } else {
+                parseWords(sorted, byCount);
+            }
         } else {
-            parseWords(sorted);
+            parseWords(sorted, byCount);
         }
     }
 
-    private static void parseLong(boolean sorted) {
+    private static void parseLong(boolean sorted, boolean byCount) {
         Scanner scanner = new Scanner(System.in);
         List<Long> list = new ArrayList<>();
         while (scanner.hasNextLong()) {
@@ -27,7 +39,17 @@ public class Main {
             list.add(number);
         }
         System.out.printf("Total numbers: %d.%n", list.size());
-        if (sorted) {
+        if (sorted && byCount) {
+            int size = list.size();
+            List<Long> listNoDuplicates = new ArrayList<>(new TreeSet<>(list));
+
+            Collections.sort(listNoDuplicates, Comparator.comparing(i -> Collections.frequency(list, i)));
+
+            listNoDuplicates.forEach(i -> System.out.println(i + ": " +
+                    Collections.frequency(list, i) + " time(s), " +
+                    (Collections.frequency(list, i) * 100) / size + "%"));
+
+        } else if (sorted) {
             System.out.print("Sorted data: ");
             Collections.sort(list);
             list.forEach(i -> System.out.print(i + " "));
@@ -40,7 +62,7 @@ public class Main {
         scanner.close();
     }
 
-    private static void parseLine(boolean sorted) {
+    private static void parseLine(boolean sorted, boolean byCount) {
         Scanner scanner = new Scanner(System.in);
         List<String> list = new ArrayList<>();
         while (scanner.hasNextLine()) {
@@ -48,10 +70,18 @@ public class Main {
             list.add(line);
         }
         System.out.printf("Total lines: %d.%n", list.size());
-        if (sorted) {
-            System.out.print("Sorted data: ");
-            Collections.sort(list, Comparator.comparing(String::length));
-            list.forEach(i -> System.out.print(i + " "));
+        if (sorted && byCount) {
+            int size = list.size();
+            List<String> listNoDuplicates = new ArrayList<>(new TreeSet<>(list));
+            Collections.sort(listNoDuplicates, Comparator.comparing(String::length).reversed());
+            Collections.sort(listNoDuplicates, Comparator.comparing(i -> Collections.frequency(list, i)));
+            listNoDuplicates.forEach(i -> System.out.println(i + ": " +
+                    Collections.frequency(list, i) + " time(s), " +
+                    (Collections.frequency(list, i) * 100) / size + "%"));
+        } else if (sorted) {
+            System.out.println("Sorted data:");
+            Collections.sort(list, Comparator.comparing(String::length).reversed());
+            list.forEach(System.out::println);
         } else {
             String maxLine = Collections.max(list, Comparator.comparing(String::length));
             long countMax = Collections.frequency(list, maxLine);
@@ -61,7 +91,7 @@ public class Main {
         scanner.close();
     }
 
-    private static void parseWords(boolean sorted) {
+    private static void parseWords(boolean sorted, boolean byCount) {
         Scanner scanner = new Scanner(System.in);
         List<String> list = new ArrayList<>();
         while (scanner.hasNextLine()) {
@@ -69,11 +99,21 @@ public class Main {
             list.addAll(Arrays.asList(line));
         }
         System.out.printf("Total words: %d.%n", list.size());
-        if (sorted) {
+        if (sorted && byCount) {
+            int size = list.size();
+            List<String> listNoDuplicates = new ArrayList<>(new TreeSet<>(list));
+
+            Collections.sort(listNoDuplicates,
+                    Comparator.comparing(i -> Collections.frequency(list, i)).thenComparing(Object::toString));
+
+            listNoDuplicates.forEach(i -> System.out.println(i + ": " +
+                    Collections.frequency(list, i) + " time(s), " +
+                    (Collections.frequency(list, i) * 100) / size + "%"));
+
+        } else if (sorted) {
             System.out.print("Sorted data: ");
-            list.stream().map(Integer::parseInt).sorted().forEach(i -> System.out.print(i + " "));
-//            Collections.sort(list, Comparator.comparing(String::length));
-//            list.forEach(i -> System.out.print(i + " "));
+            Collections.sort(list);
+            list.forEach(i -> System.out.print(i + " "));
         } else {
             String maxWord = Collections.max(list, Comparator.comparing(String::length));
             long countMax = Collections.frequency(list, maxWord);

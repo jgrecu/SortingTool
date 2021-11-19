@@ -367,5 +367,28 @@ files:
 
   learner_created: false
 feedback_link: https://hyperskill.org/projects/45/stages/242/implement#comment
-status: Unchecked
+status: Failed
+feedback:
+  message: |-
+    Wrong answer in test #6
+
+    Token is incorrect.
+
+    Please find below the output of your program during this failed test.
+    Note that the &#39;&gt;&#39; character indicates the beginning of the input line.
+
+    ---
+
+    Arguments: -sortingType byCount -dataType line
+
+    &gt; 1111 1111
+    &gt; 22222
+    &gt; 3
+    &gt; 44
+    Total lines: 4.
+    1111 1111: 1 time(s), 25%
+    22222: 1 time(s), 25%
+    44: 1 time(s), 25%
+    3: 1 time(s), 25%
+  time: Fri, 19 Nov 2021 13:40:16 UTC
 record: -1
